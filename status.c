@@ -19,10 +19,10 @@
 // Files read for system info:
 #define CPU_FILE		"/proc/stat"
 #define MEM_FILE		"/proc/meminfo"
-#define AUD_FILE		"/home/jmcclure/.status_info"
-#define BATT_NOW		"/sys/class/power_supply/BAT1/charge_now"
-#define BATT_FULL		"/sys/class/power_supply/BAT1/charge_full"
-#define BATT_STAT		"/sys/class/power_supply/BAT1/status"
+//#define AUD_FILE		"/home/jmcclure/.status_info"
+#define BATT_NOW		"/sys/class/power_supply/BAT0/charge_now"
+#define BATT_FULL		"/sys/class/power_supply/BAT0/charge_full"
+#define BATT_STAT		"/sys/class/power_supply/BAT0/status"
 // Display format strings:
 //  Defaults make extensive use of escape characters for colors which require
 //  colorstatus patch.  There are also "extended" characters selected to work
@@ -35,7 +35,7 @@
 #define BAT_STR			"Ü	 %d%% Ü"				// Battery, unplugged, above BATT_LOW%
 #define BAT_LOW_STR		"Ü %d%% Ü"					// Battery, unplugged, below BATT_LOW% remaining
 #define BAT_CHRG_STR	"Ü %d%% Ü"					// Battery, when charging (plugged into AC)
-#define DATE_TIME_STR	"Ü %a %b %d ÜÜ Õ %H:%M "	// This is a strftime format string which is passed localtime
+#define DATE_TIME_STR	"\uE015 Ü %a %b %d ÜÜ Õ %H:%M "	// This is a strftime format string which is passed localtime
 
 int main() {
 	Display *dpy;
@@ -81,7 +81,7 @@ int main() {
 		fclose(infile);
 		sprintf(statnext,MEM_STR,100*lnum2/lnum1,100*lnum3/lnum1,100*lnum4/lnum1);
 		strcat(status,statnext);
-	// Audio volume:
+	/*/ Audio volume:
 		infile = fopen(AUD_FILE,"r");
 		fscanf(infile,"%d",&num);
 		fclose(infile);
@@ -89,7 +89,7 @@ int main() {
 			sprintf(statnext,VOL_MUTE_STR,num);
 		else
 			sprintf(statnext,VOL_STR,num);
-		strcat(status,statnext);
+		strcat(status,statnext);*/
 	// Power / Battery:
 		infile = fopen(BATT_NOW,"r");
 			fscanf(infile,"%ld\n",&lnum1);fclose(infile);

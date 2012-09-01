@@ -33,14 +33,14 @@ int getcpu(char *status, size_t size) {
     char c;
     while (c != '\n') c = fgetc(fd);
     fscanf(fd, "cpu0 %ld %ld %ld %ld %ld %ld %ld", &jif1, &jif2, &jif3, &jif4, &jif5, &jif6, &jif7);
-    work0 = jif1 + jif2 + jif3;
-    total0 = work0 + jif4 + jif5 + jif6 + jif7;
+    work0 = jif1 + jif2 + jif3 + jif6 + jif7;
+    total0 = work0 + jif4 + jif5;
 
     c = 0;
     while (c != '\n') c = fgetc(fd);
     fscanf(fd, "cpu1 %ld %ld %ld %ld %ld %ld %ld", &jif1, &jif2, &jif3, &jif4, &jif5, &jif6, &jif7);
-    work1 = jif1 + jif2 + jif3;
-    total1 = work1 + jif4 + jif5 + jif6 + jif7;
+    work1 = jif1 + jif2 + jif3 + jif6 + jif7;
+    total1 = work1 + jif4 + jif5;
 
     fclose(fd);
 
@@ -75,7 +75,7 @@ int getcpu(char *status, size_t size) {
         color1 = "\x05";
     }
 
-    return snprintf(status, size, "\x02\uE026 %s%d%% %s%d%%", color0, load0, color1, load1);
+    return snprintf(status, size, "\x01\uE026%s%3d%%%s%3d%%", color0, load0, color1, load1);
 }
 
 int getmem(char *status, size_t size) {
@@ -88,10 +88,10 @@ int getmem(char *status, size_t size) {
     fclose(fd);
     used = 100 * (total - free - buf - cache) / total;
     if(used > 80) {
-        return snprintf(status, size, "\x02\uE021 \x03%d%%", used);
+        return snprintf(status, size, "\x01\uE021\x03%d%%", used);
     } else {
 
-        return snprintf(status, size, "\x02\uE021 %d%%", used);
+        return snprintf(status, size, "\x01\uE021\x02%d%%", used);
     }
 }
 
@@ -102,7 +102,7 @@ int getdatetime(char *status, size_t size) {
 	result = time(NULL);
 	resulttm = localtime(&result);
 	
-    return strftime(status, size, "\x02\uE016 %a %b %d %H:%M", resulttm);
+    return strftime(status, size, "\x01\uE016\x02%a %b %d %H:%M", resulttm);
 }
 
 int getbattery(char *status, size_t size) {
@@ -113,7 +113,6 @@ int getbattery(char *status, size_t size) {
 	fd = fopen("/sys/class/power_supply/BAT0/charge_now", "r");
 	fscanf(fd, "%d", &now);
 	fclose(fd);
-
 
 	fd = fopen("/sys/class/power_supply/BAT0/charge_full", "r");
 	fscanf(fd, "%d", &full);
@@ -127,14 +126,14 @@ int getbattery(char *status, size_t size) {
 
     if(strncmp(stat, "Discharging", 11) == 0) {    
         if(bat < 20) {            
-            return snprintf(status, size, "\x03\uE03D %d%%", bat);
+            return snprintf(status, size, "\x01\uE03D\x03%d%%", bat);
         } else if(bat > 80) {
-            return snprintf(status, size, "\x04\uE03F %d%%", bat);
+            return snprintf(status, size, "\x01\uE03F\x04%d%%", bat);
         } else {
-            return snprintf(status, size, "\x05\uE03E %d%%", bat);
+            return snprintf(status, size, "\x01\uE03E\x05%d%%", bat);
         }
     } else if(strncmp(stat, "Charging", 8) == 0) {
-        return snprintf(status, size, "\x02\uE043 %d%%", bat);
+        return snprintf(status, size, "\x01\uE043\x02%d%%", bat);
     } else {
         return snprintf(status, size, "\x02\uE043");
     }
@@ -150,11 +149,11 @@ int gettemp(char *status, size_t size) {
     temp /= 1000;
 
     if(temp > 60) {
-        return snprintf(status, size, "\x02\uE0CF \x03%d°C", temp);
-    } else if(temp > 40) {
-        return snprintf(status, size, "\x02\uE0CF \x05%d°C", temp);
+        return snprintf(status, size, "\x01\uE0CF\x03%d°C", temp);
+    } else if(temp > 45) {
+        return snprintf(status, size, "\x01\uE0CF\x05%d°C", temp);
     } else {
-        return snprintf(status, size, "\x02\uE0CF %d°C", temp);
+        return snprintf(status, size, "\x01\uE0CF\x02%d°C", temp);
     }
 }
 
@@ -170,14 +169,13 @@ int main(void) {
 	for (;;sleep(2)) {
         
         l = getcpu(status, sizeof(status));
-        l += snprintf(status + l, sizeof(status) - l, "\x01 | ");
+        //l += snprintf(status + l, sizeof(status) - l, "\x01|");
         l += gettemp(status + l, sizeof(status) - l);
-        l += snprintf(status + l, sizeof(status) - l, "\x01 | ");
         l += getmem(status + l, sizeof(status) - l);
-        l += snprintf(status + l, sizeof(status) - l, "\x01 | ");
         l += getbattery(status + l, sizeof(status) - l);
-        l += snprintf(status + l, sizeof(status) - l, "\x01 | ");
         l += getdatetime(status + l, sizeof(status) - l);
+        
+        //fprintf(stderr, "%d\n", l);
 
 		setstatus(status);
 	}

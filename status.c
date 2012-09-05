@@ -1,8 +1,10 @@
-/* made by profil 2011-12-29.
-**
-** Compile with:
-** gcc -Wall -pedantic -std=c99 -lX11 status.c
-*/
+/*
+ * This is free and unencumbered public domain software. 
+ * For more information see http://unlicense.org/.
+ *
+ * @author Hans-Harro Horn
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

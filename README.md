@@ -9,5 +9,5 @@ Conky like DWM status bar written in C.
 - Battery
 - Clock
 
-![DWM Bar](dwmstatus.png)
+![DWM Bar](http://github.com/cornu/dwmstatus/raw/master/dwmstatus.png)
 

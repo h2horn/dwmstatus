@@ -159,6 +159,21 @@ int gettemp(char *status, size_t size) {
     }
 }
 
+int getvol(char* status, size_t size) {
+    FILE *fd;
+    int vol;
+
+    fd = fopen("/tmp/volume", "r");
+    fscanf(fd, "%d", &vol);
+    fclose(fd);
+
+    if(vol == 0) {
+        return snprintf(status, size, "\x02\uE04F");
+    } else {
+        return snprintf(status, size, "\x01\uE050\x02%d%%", vol);
+    }
+}
+
 int main(void) {
 	char status[200];
     int l = 0;
@@ -175,6 +190,7 @@ int main(void) {
         l += gettemp(status + l, sizeof(status) - l);
         l += getmem(status + l, sizeof(status) - l);
         l += getbattery(status + l, sizeof(status) - l);
+        l += getvol(status + l, sizeof(status) - l);
         l += getdatetime(status + l, sizeof(status) - l);
         
         //fprintf(stderr, "%d\n", l);

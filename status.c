@@ -77,7 +77,7 @@ int getcpu(char *status, size_t size) {
         color1 = "\x05";
     }
 
-    return snprintf(status, size, "\x01\uE026%s%3d%%%s%3d%%", color0, load0, color1, load1);
+    return snprintf(status, size, "\x01\bC%s%3d%%%s%3d%%", color0, load0, color1, load1);
 }
 
 int getmem(char *status, size_t size) {
@@ -90,10 +90,10 @@ int getmem(char *status, size_t size) {
     fclose(fd);
     used = 100 * (total - free - buf - cache) / total;
     if(used > 80) {
-        return snprintf(status, size, "\x01\uE021\x03%d%%", used);
+        return snprintf(status, size, "\x01M\x03%d%%", used);
     } else {
 
-        return snprintf(status, size, "\x01\uE021\x02%d%%", used);
+        return snprintf(status, size, "\x01M\x02%d%%", used);
     }
 }
 
@@ -104,7 +104,7 @@ int getdatetime(char *status, size_t size) {
 	result = time(NULL);
 	resulttm = localtime(&result);
 	
-    return strftime(status, size, "\x01\uE016\x02%a %b %d %H:%M", resulttm);
+    return strftime(status, size, "\x01 D\x02%b %d %H:%M", resulttm);
 }
 
 int getbattery(char *status, size_t size) {
@@ -128,16 +128,16 @@ int getbattery(char *status, size_t size) {
 
     if(strncmp(stat, "Discharging", 11) == 0) {    
         if(bat < 20) {            
-            return snprintf(status, size, "\x01\uE03D\x03%d%%", bat);
+            return snprintf(status, size, "\x01 B\x03%d%%", bat);
         } else if(bat > 80) {
-            return snprintf(status, size, "\x01\uE03F\x04%d%%", bat);
+            return snprintf(status, size, "\x01 B\x04%d%%", bat);
         } else {
-            return snprintf(status, size, "\x01\uE03E\x05%d%%", bat);
+            return snprintf(status, size, "\x01 B\x05%d%%", bat);
         }
     } else if(strncmp(stat, "Charging", 8) == 0) {
-        return snprintf(status, size, "\x01\uE043\x02%d%%", bat);
+        return snprintf(status, size, "\x01 B charging\x02%d%%", bat);
     } else {
-        return snprintf(status, size, "\x02\uE043");
+        return snprintf(status, size, "\x01 B\x02 full");
     }
 }
 
@@ -151,11 +151,11 @@ int gettemp(char *status, size_t size) {
     temp /= 1000;
 
     if(temp > 60) {
-        return snprintf(status, size, "\x01\uE0CF\x03%d°C", temp);
+        return snprintf(status, size, "\x01T\x03%d℃", temp);
     } else if(temp > 45) {
-        return snprintf(status, size, "\x01\uE0CF\x05%d°C", temp);
+        return snprintf(status, size, "\x01T\x05%d℃", temp);
     } else {
-        return snprintf(status, size, "\x01\uE0CF\x02%d°C", temp);
+        return snprintf(status, size, "\x01T\x02%d℃", temp);
     }
 }
 
@@ -168,9 +168,9 @@ int getvol(char* status, size_t size) {
     fclose(fd);
 
     if(vol == 0) {
-        return snprintf(status, size, "\x02\uE04F");
+        return snprintf(status, size, "\x01V\x02Mute");
     } else {
-        return snprintf(status, size, "\x01\uE050\x02%d%%", vol);
+        return snprintf(status, size, "\x01V\x02%d%%", vol);
     }
 }
 

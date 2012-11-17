@@ -128,16 +128,16 @@ int getbattery(char *status, size_t size) {
 
     if(strncmp(stat, "Discharging", 11) == 0) {    
         if(bat < 20) {            
-            return snprintf(status, size, "\x01""\x03%d%%", bat);
+            return snprintf(status, size, "\x01""B\x03%d%%", bat);
         } else if(bat > 80) {
-            return snprintf(status, size, "\x01""\x04%d%%", bat);
+            return snprintf(status, size, "\x01""B\x04%d%%", bat);
         } else {
-            return snprintf(status, size, "\x01""\x05%d%%", bat);
+            return snprintf(status, size, "\x01""B\x05%d%%", bat);
         }
     } else if(strncmp(stat, "Charging", 8) == 0) {
-        return snprintf(status, size, "\x01""B charging\x02%d%%", bat);
+        return snprintf(status, size, "\x01""B AC\x02%d%%", bat);
     } else {
-        return snprintf(status, size, "\x01""B\x02""full");
+        return snprintf(status, size, "\x01""B\x02""AC");
     }
 }
 

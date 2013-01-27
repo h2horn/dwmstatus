@@ -164,6 +164,9 @@ int getvol(char* status, size_t size) {
     int vol;
 
     fd = fopen("/tmp/volume", "r");
+    if (fd==NULL) {
+        return 0;
+    }
     fscanf(fd, "%d", &vol);
     fclose(fd);
 

@@ -177,8 +177,22 @@ int getvol(char* status, size_t size) {
     }
 }
 
+int getwireless(char* status, size_t size) {
+    FILE *fd;
+    char net[20];
+
+    fd = fopen("/tmp/wireless", "r");
+    if (fd==NULL) {
+        return 0;
+    }
+    fscanf(fd, "%s", net);
+    fclose(fd);
+
+    return snprintf(status, size, "\x01""W\x02%s", net);
+}
+
 int main(void) {
-	char status[200];
+	char status[100];
     int l = 0;
 
 	if (!(dpy = XOpenDisplay(NULL))) {
@@ -192,6 +206,7 @@ int main(void) {
         //l += snprintf(status + l, sizeof(status) - l, "\x01|");
         l += gettemp(status + l, sizeof(status) - l);
         l += getmem(status + l, sizeof(status) - l);
+        l += getwireless(status + l, sizeof(status) - l);
         l += getbattery(status + l, sizeof(status) - l);
         l += getvol(status + l, sizeof(status) - l);
         l += getdatetime(status + l, sizeof(status) - l);

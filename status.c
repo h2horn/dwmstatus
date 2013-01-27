@@ -191,6 +191,13 @@ int getwireless(char* status, size_t size) {
     return snprintf(status, size, "\x01""W\x02%s", net);
 }
 
+int getwired(char* status, size_t size) {
+    if (access("/tmp/wired", F_OK) == -1) {
+        return 0;
+    }
+    return snprintf(status, size, "\x01""N\x02""UP");
+}
+
 int main(void) {
 	char status[100];
     int l = 0;
@@ -207,6 +214,7 @@ int main(void) {
         l += gettemp(status + l, sizeof(status) - l);
         l += getmem(status + l, sizeof(status) - l);
         l += getwireless(status + l, sizeof(status) - l);
+        l += getwired(status + l, sizeof(status) - l);
         l += getbattery(status + l, sizeof(status) - l);
         l += getvol(status + l, sizeof(status) - l);
         l += getdatetime(status + l, sizeof(status) - l);

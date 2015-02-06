@@ -1,13 +1,15 @@
 dwmstatus
 =========
 
+![DWM Bar](dwmstatus.png)
+
 Conky like DWM status bar written in C.
 
-- CPU Load / Freq
-- Temperature
+- CPU Load / colored Frequency
+- Temperature (CPU/GPU)
 - Memory
-- Wireless Network
-- Wired Network
+- (Wireless Network)
+- (Wired Network)
 - Battery
 - Volume
 - Clock
@@ -19,6 +21,4 @@ Conky like DWM status bar written in C.
 - "/tmp/volume" volume in %
 - "/tmp/wireless" if exists contains essid
 - "/tmp/wired" if exists network is up
-
-![DWM Bar](http://github.com/cornu/dwmstatus/raw/master/dwmstatus.png)
 

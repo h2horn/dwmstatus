@@ -2,7 +2,7 @@
  * This is free and unencumbered public domain software.
  * For more information see http://unlicense.org/.
  *
- * @author Hans-Harro Horn
+ * @author Hans-Harro Horn <h.h.horn@gmail.com> (hhhorn.de)
  */
 
 #include <stdio.h>

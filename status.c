@@ -29,7 +29,7 @@ int readInt(char *input) {
 
     fd = fopen(input, "r");
     if (fd==NULL)
-        return 0;
+        return -1;
     fscanf(fd, "%d", &val);
     fclose(fd);
     return val;

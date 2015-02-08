@@ -162,9 +162,9 @@ int gettemp(char *status, size_t size) {
     else
         colorc = "\x02";
 
-    if (gpu > 95)
+    if (gpu > 90)
         colorg = "\x06";
-    else if (gpu > 75)
+    else if (gpu > 70)
         colorg = "\x04";
     else
         colorg = "\x02";

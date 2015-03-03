@@ -8,8 +8,7 @@ Conky like DWM status bar written in C.
 - CPU Load / colored Frequency
 - Temperature (CPU/GPU)
 - Memory
-- (Wireless Network)
-- (Wired Network)
+- Network Profile Name
 - Battery
 - Volume
 - Clock
@@ -19,6 +18,5 @@ Conky like DWM status bar written in C.
 ### /tmp files
 
 - "/tmp/volume" volume in %
-- "/tmp/wireless" if exists contains essid
-- "/tmp/wired" if exists network is up
+- "/tmp/network-profile" if exists contains network profile name
 

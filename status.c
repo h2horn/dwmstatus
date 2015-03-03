@@ -71,19 +71,19 @@ int getcpu(char *status, size_t size) {
     if(freq <= 800000)
         color0 = "\x02";
     else if(freq >= 2000000)
-        color0 = "\x06";
+        color0 = "\x07";
     else
-        color0 = "\x04";
+        color0 = "\x05";
 
     freq = readInt("/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq");
     if(freq <= 800000)
         color1 = "\x02";
     else if(freq >= 2000000)
-        color1 = "\x06";
+        color1 = "\x07";
     else
-        color1 = "\x04";
+        color1 = "\x05";
 
-    return snprintf(status, size, "\x09""C%s%3d%%%s%3d%%", color0, load0, color1, load1);
+    return snprintf(status, size, "\x08""C%s%3d%%%s%3d%%", color0, load0, color1, load1);
 }
 
 int getmem(char *status, size_t size) {
@@ -98,9 +98,9 @@ int getmem(char *status, size_t size) {
     fclose(fd);
     used = 100 * (total - available) / total;
     if(used > 80) {
-        return snprintf(status, size, "\x09""M\x06%d%%", used);
+        return snprintf(status, size, "\x08""M\x05%d%%", used);
     } else {
-        return snprintf(status, size, "\x09""M\x02%d%%", used);
+        return snprintf(status, size, "\x08""M\x02%d%%", used);
     }
 }
 
@@ -111,7 +111,7 @@ int getdatetime(char *status, size_t size) {
     result = time(NULL);
     resulttm = localtime(&result);
 
-    return strftime(status, size, "\x09""D\x02%b %d %H:%M", resulttm);
+    return strftime(status, size, "\x08""D\x02%b %d %H:%M", resulttm);
 }
 
 int getbattery(char *status, size_t size) {
@@ -135,16 +135,16 @@ int getbattery(char *status, size_t size) {
 
     if(strncmp(stat, "Discharging", 11) == 0) {
         if(bat < 20) {
-            return snprintf(status, size, "\x09""B\x06%d%%", bat);
+            return snprintf(status, size, "\x08""B\x05%d%%", bat);
         } else if(bat > 80) {
-            return snprintf(status, size, "\x09""B\x0b%d%%", bat);
+            return snprintf(status, size, "\x08""B\x06%d%%", bat);
         } else {
-            return snprintf(status, size, "\x09""B\x04%d%%", bat);
+            return snprintf(status, size, "\x08""B\x07%d%%", bat);
         }
     } else if(strncmp(stat, "Charging", 8) == 0) {
-        return snprintf(status, size, "\x09""B\x0b""AC\x02%d%%", bat);
+        return snprintf(status, size, "\x08""B\x06""AC\x02%d%%", bat);
     } else {
-        return snprintf(status, size, "\x09""B\x02""AC");
+        return snprintf(status, size, "\x08""B\x02""AC");
     }
 }
 
@@ -156,20 +156,20 @@ int gettemp(char *status, size_t size) {
     gpu = readInt("/sys/class/hwmon/hwmon0/temp1_input") / 1000;
 
     if (cpu > 60)
-        colorc = "\x06";
+        colorc = "\x05";
     else if(cpu > 45)
-        colorc = "\x04";
+        colorc = "\x07";
     else
         colorc = "\x02";
 
     if (gpu > 90)
-        colorg = "\x06";
+        colorg = "\x05";
     else if (gpu > 70)
-        colorg = "\x04";
+        colorg = "\x07";
     else
         colorg = "\x02";
 
-    return snprintf(status, size, "\x09""T%s%d°C%s%d°C", colorc, cpu, colorg, gpu);
+    return snprintf(status, size, "\x08""T%s%d°C%s%d°C", colorc, cpu, colorg, gpu);
 }
 
 int getvol(char* status, size_t size) {
@@ -178,31 +178,24 @@ int getvol(char* status, size_t size) {
     vol = readInt("/tmp/volume");
 
     if(vol == 0) {
-        return snprintf(status, size, "\x09""V\x02""Mute");
+        return snprintf(status, size, "\x08""V\x05""Mute");
     } else {
-        return snprintf(status, size, "\x09""V\x02%d%%", vol);
+        return snprintf(status, size, "\x08""V\x02%d%%", vol);
     }
 }
 
-int getwireless(char* status, size_t size) {
+int getnetwork(char* status, size_t size) {
     FILE *fd;
     char net[20];
 
-    fd = fopen("/tmp/wireless", "r");
+    fd = fopen("/tmp/network-profile", "r");
     if (fd==NULL) {
         return 0;
     }
     fscanf(fd, "%s", net);
     fclose(fd);
 
-    return snprintf(status, size, "\x09""W\x02%s", net);
-}
-
-int getwired(char* status, size_t size) {
-    if (access("/tmp/wired", F_OK) == -1) {
-        return 0;
-    }
-    return snprintf(status, size, "\x09""N\x02""UP");
+    return snprintf(status, size, "\x08""W\x02%s", net);
 }
 
 int main(void) {
@@ -219,8 +212,7 @@ int main(void) {
         l = getcpu(status, sizeof(status));
         l += gettemp(status + l, sizeof(status) - l);
         l += getmem(status + l, sizeof(status) - l);
-        l += getwireless(status + l, sizeof(status) - l);
-        l += getwired(status + l, sizeof(status) - l);
+        l += getnetwork(status + l, sizeof(status) - l);
         l += getbattery(status + l, sizeof(status) - l);
         l += getvol(status + l, sizeof(status) - l);
         l += getdatetime(status + l, sizeof(status) - l);
